@@ -1,0 +1,64 @@
+﻿@page "/RalacionEspecialidad"
+
+@using Estadisticas.Model;
+@using Estadisticas.Dao;
+@inject IToastService toastService;
+
+<h3>Relacion Derivadores</h3>
+
+<EditForm Model="@relacionDerivacionTxt">
+    <p>Medico</p>
+    <InputSelect class="form-control d-flex" style="width:500px" @bind-Value="@relacionDerivacionTxt.id_medico_derivador">
+        @foreach (var medico in list_Med)
+        {
+            <option value="@medico.id_medico_derivador">@medico.Medico</option>
+        }
+    </InputSelect>
+    <br />
+    <p>Especialidad</p>
+    <InputSelect class="form-control d-flex" style="width:500px" @bind-Value="@relacionDerivacionTxt.id_especialidad_derivador">
+        @foreach (var especialidad in list_Esp)
+        {
+            <option value="@especialidad.id_especialidad">@especialidad.Especialidad</option>
+        }
+    </InputSelect>
+    <br />
+    <button type="submit" @onclick="updateRelacion">Guardar</button>
+</EditForm>
+
+@code {
+
+    RelacionDerivacionTextClass relacionDerivacionTxt = new RelacionDerivacionTextClass();
+    DaoMedicosDerivadores daoMedicoDerivador = new DaoMedicosDerivadores();
+    DaoEspecialidadesDerivadores daoEspecialidadesDerivadores = new DaoEspecialidadesDerivadores();
+    MedicosDerivadoresClass[] list_Med;
+    EspecialidadesDerivadoresClass[] list_Esp;
+
+    protected override async Task OnInitializedAsync()
+    {
+        list_Med = await daoMedicoDerivador.GetMedicosAsync();
+        list_Esp = await daoEspecialidadesDerivadores.GetEspecialidadAsync();
+    }
+
+    void updateRelacion()
+    {
+        RelacionDerivacionClass relacionDerivacion = new RelacionDerivacionClass();
+        relacionDerivacion.id_especialidad = Convert.ToInt32(relacionDerivacionTxt.id_especialidad_derivador);
+        relacionDerivacion.id_medico_derivador = Convert.ToInt32(relacionDerivacionTxt.id_medico_derivador);
+        DaoRelacionDerivadores daoRelacionDerivadores = new DaoRelacionDerivadores();
+        if (!daoRelacionDerivadores.Check_RelacionDerivador(relacionDerivacion.id_especialidad, relacionDerivacion.id_medico_derivador))
+        {
+            if (daoRelacionDerivadores.Insert_RelacionDerivador(relacionDerivacion))
+            {
+                toastService.ShowInfo("Los datos se han guardado con exito.!!!", "Relacion");
+            } else
+            {
+                toastService.ShowError("Los datos no se han podido guardar", "Relacion");
+            }
+
+        }else
+        {
+            toastService.ShowWarning("La relacion ya existe...", "Relacion");
+        }
+    }
+}

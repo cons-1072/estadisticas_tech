@@ -1,0 +1,44 @@
+﻿@page "/Medicos_Derivadores"
+
+@using Estadisticas.Model;
+@using Estadisticas.Dao;
+
+<h3>Medicos_Derivadores</h3>
+
+<EditForm Model="@MedicoDerivador" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <p>Medico</p>
+    <select class="form-control d-flex" style="width:500px" >
+        @foreach (var medico in list_Med)
+        {
+            <option value=@medico>@medico.Medico</option>
+        }
+    </select>
+
+    <InputText id="Metricula" @bind-Value="@MedicoDerivador.Matricula" />
+
+    <br />
+    <button type="submit">Guardar</button>
+</EditForm>
+
+@code {
+    private DaoMedicosDerivadores daoMedicoDerivador = new DaoMedicosDerivadores();
+    MedicosDerivadoresClass[] list_Med;
+    private MedicosDerivadoresClass MedicoDerivador = new MedicosDerivadoresClass();
+
+    protected override async Task OnInitializedAsync()
+    {
+        list_Med = await daoMedicoDerivador.GetMedicosAsync();
+    }
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("OnValidSubmit");
+    }
+
+    private void change_select()
+    {
+        Console.WriteLine("OnValidSubmit");
+    }
+}

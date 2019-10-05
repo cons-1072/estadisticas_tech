@@ -1,0 +1,88 @@
+﻿@page "/uploadfiles"
+
+@using System.IO;
+@using Blazor.FileReader;
+@using Estadisticas.Data;
+@inject Blazor.FileReader.IFileReaderService fileReaderService;
+
+<h1>Importar Archivo</h1>
+
+<input type="file" @ref=inputElement />
+<br />
+<button @onclick=ReadFile class="btn btn-primary">Leer Archivo</button>
+<button @onclick=ClearFile class="btn btn-primary">Limpiar</button>
+
+<br />
+<textarea style="max-width: 100%;" cols="70" rows="15">@Output</textarea>
+
+@code {
+    ElementReference inputElement;
+
+    string Output { get; set; }
+
+    public async Task ClearFile()
+    {
+        await fileReaderService.CreateReference(inputElement).ClearValue();
+    }
+
+    public async Task ReadFile()
+    {
+        Console.WriteLine("DO something");
+
+        Output = string.Empty;
+        this.StateHasChanged();
+        var nl = Environment.NewLine;
+        foreach (var file in await fileReaderService.CreateReference(inputElement).EnumerateFilesAsync())
+        {
+
+            var fileInfo = await file.ReadFileInfoAsync();
+            Output += $"{nameof(IFileInfo)}.{nameof(fileInfo.Name)}: {fileInfo.Name}{nl}";
+            Output += $"{nameof(IFileInfo)}.{nameof(fileInfo.Size)}: {fileInfo.Size}{nl}";
+            Output += $"{nameof(IFileInfo)}.{nameof(fileInfo.Type)}: {fileInfo.Type}{nl}";
+            Output += $"{nameof(IFileInfo)}.{nameof(fileInfo.LastModifiedDate)}: {fileInfo.LastModifiedDate?.ToString() ?? "(N/A)"}{nl}";
+            Output += $"Reading file...,";
+            this.StateHasChanged();
+            Console.WriteLine(Output);
+            int Impor = 0;
+            int No_imp = 0;
+
+            using (Stream blobStream = await file.OpenReadAsync())
+            {
+                using (StreamReader blobStreamReader = new StreamReader(blobStream))
+                {
+                    string line;
+                    while ((line = await blobStreamReader.ReadLineAsync()) != null)
+                    {
+                        Import_Data import = new Import_Data();
+                        if (import.Importar(line))
+                        {
+                            Impor++;
+                        } else
+                        {
+                            No_imp++;
+                        }
+                        Output = $"Importados: {Impor}, No Importados: {No_imp}";
+                        this.StateHasChanged();
+                    }
+                }
+            }
+
+            /*using (var fs = await file.OpenReadAsync())
+            {
+                var bufferSize = fileInfo.Size;
+                var buffer = new byte[bufferSize];
+
+                while ((count = await fs.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                {
+                    Import_Data import = new Import_Data();
+                    importados = import.Importar(buffer, Bloque);
+                    Output += $"Bloque: {Bloque} Importados: {importados} Read {count} bytes. {fs.Position} / {fs.Length}{nl},";
+                    this.StateHasChanged();
+                    Bloque++;
+                }
+                Output += $"Done reading file {fileInfo.Name}{nl}.";
+            }*/
+            this.StateHasChanged();
+        }
+    }
+}

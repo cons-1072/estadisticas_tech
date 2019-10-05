@@ -1,0 +1,144 @@
+﻿@page "/Amb_Estadisticas"
+
+@using Estadisticas.Data;
+@using Estadisticas.Model;
+@using Estadisticas.Dao;
+@using LoreSoft.Blazor.Controls;
+
+<h3>Estadisticas Ambulatorio</h3>
+
+            <EditForm Model="@relacionDerivacionTxt" >
+                <p>
+                    <Typeahead SearchMethod=@SearchMedico Items=@list_Med @bind-Values=@list_selection_med Placeholder="Medico Derivador" style="width:300px">
+                        <SelectedTemplate Context="medico">
+                            @medico.Medico
+                        </SelectedTemplate>
+                        <ResultTemplate Context="medico">
+                            @medico.Medico
+                        </ResultTemplate>
+                    </Typeahead>
+                </p>
+                <p>
+                    <Typeahead SearchMethod=@SearchEspeDerivadora Items=@list_Esp @bind-Values=@list_selection_derivador Placeholder="Especialidad Derivador" style="width:300px">
+                        <SelectedTemplate Context="especialidad_derivadora">
+                            @especialidad_derivadora.Especialidad
+                        </SelectedTemplate>
+                        <ResultTemplate Context="especialidad_derivadora">
+                            @especialidad_derivadora.Especialidad
+                        </ResultTemplate>
+                    </Typeahead>
+                </p>
+                <p>
+                    <Typeahead SearchMethod=@SearchEspeEfectora Items=@list_Esp_Efec @bind-Values=@list_selection_efector Placeholder="Especialidad Efector" style="width:300px">
+                        <SelectedTemplate Context="especialidad_efectora">
+                            @especialidad_efectora.Especialidad_Efector
+                        </SelectedTemplate>
+                        <ResultTemplate Context="especialidad_efectora">
+                            @especialidad_efectora.Especialidad_Efector
+                        </ResultTemplate>
+                    </Typeahead>
+                </p>
+                <br />
+                <button type="submit" @onclick="procesar">Listar</button>
+            </EditForm>
+
+
+            @if (list_estadisticas == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Paciente</th>
+                            <th>Cobertura</th>
+                            <th>Codigo</th>
+                            <th>Descripcion</th>
+                            <th>Cantidad</th>
+                            <th>Efector</th>
+                            <th>Especialidad</th>
+                            <th>Derivador</th>
+                            <th>Grupo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var estadisticas in list_estadisticas)
+                        {
+                            <tr>
+                                <td>@estadisticas.fecha.ToShortDateString()</td>
+                                <td>@estadisticas.paciente</td>
+                                <td>@estadisticas.cobertura</td>
+                                <td>@estadisticas.codigo</td>
+                                <td>@estadisticas.descripcion</td>
+                                <td>@estadisticas.cantidad</td>
+                                <td>@estadisticas.efector</td>
+                                <td>@estadisticas.especialidad</td>
+                                <td>@estadisticas.derivador</td>
+                                <td>@estadisticas.grupo</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            @code {
+
+                RelacionDerivacionTextClass relacionDerivacionTxt = new RelacionDerivacionTextClass();
+                DaoMedicosDerivadores daoMedicoDerivador = new DaoMedicosDerivadores();
+                DaoEspecialidadesDerivadores daoEspecialidadesDerivadores = new DaoEspecialidadesDerivadores();
+                DaoEspecialidadesEfector daoEspecialidadesEfector = new DaoEspecialidadesEfector();
+                MedicosDerivadoresClass[] list_Med;
+                EspecialidadesDerivadoresClass[] list_Esp;
+                EspecialidadesEfectoresClass[] list_Esp_Efec;
+                List<AmbListClass> list_estadisticas;
+                MedicosDerivadoresClass medico = new MedicosDerivadoresClass();
+                EspecialidadesDerivadoresClass especialidad_derivadora = new EspecialidadesDerivadoresClass();
+                EspecialidadesEfectoresClass especialidad_efectora = new EspecialidadesEfectoresClass();
+                IList<MedicosDerivadoresClass> list_selection_med;
+                IList<EspecialidadesDerivadoresClass> list_selection_derivador;
+                IList<EspecialidadesEfectoresClass> list_selection_efector;
+
+                protected override async Task OnInitializedAsync()
+                {
+                    list_Med = await daoMedicoDerivador.GetMedicosAsync();
+                    list_Esp = await daoEspecialidadesDerivadores.GetEspecialidadAsync();
+                    list_Esp_Efec = await daoEspecialidadesEfector.GetEspecialidadEfectorAsync();
+                }
+
+                void procesar()
+                {
+                    list_estadisticas = new List<AmbListClass>();
+                    DaoAmbEstadisticas daoAmbEstadisticas = new DaoAmbEstadisticas();
+                    list_estadisticas = daoAmbEstadisticas.Estadisticas_Ambulatoria(list_selection_med, list_selection_derivador, list_selection_efector);
+                }
+
+                Task<IEnumerable<MedicosDerivadoresClass>> SearchMedico(string searchText)
+                {
+                    List<MedicosDerivadoresClass> result = list_Med
+                        .Where(x => x.Medico.ToLower().Contains(searchText.ToLower()))
+                        .ToList();
+
+                    return Task.FromResult<IEnumerable<MedicosDerivadoresClass>>(result);
+                }
+
+                Task<IEnumerable<EspecialidadesDerivadoresClass>> SearchEspeDerivadora(string searchText)
+                {
+                    List<EspecialidadesDerivadoresClass> result = list_Esp
+                        .Where(x => x.Especialidad.ToLower().Contains(searchText.ToLower()))
+                        .ToList();
+
+                    return Task.FromResult<IEnumerable<EspecialidadesDerivadoresClass>>(result);
+                }
+
+                Task<IEnumerable<EspecialidadesEfectoresClass>> SearchEspeEfectora(string searchText)
+                {
+                    List<EspecialidadesEfectoresClass> result = list_Esp_Efec
+                        .Where(x => x.Especialidad_Efector.ToLower().Contains(searchText.ToLower()))
+                        .ToList();
+
+                    return Task.FromResult<IEnumerable<EspecialidadesEfectoresClass>>(result);
+                }
+            }
