@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Estadisticas.Data;
 using Blazor.FileReader;
 using Blazored.Toast;
+using BlazorDataGrid.Services;
 
 namespace Estadisticas
 {
@@ -37,6 +38,7 @@ namespace Estadisticas
             //services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddBlazoredToast();
+            services.AddScoped<AppState, AppState>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

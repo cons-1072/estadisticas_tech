@@ -85,5 +85,50 @@ namespace Estadisticas.Dao
             }
             return retorno;
         }
+
+        public List<RelacionDerivacionClass> list_relacion(IList<EspecialidadesDerivadoresClass> list_selection_derivador)
+        {
+            List<RelacionDerivacionClass> List_Retorno = new List<RelacionDerivacionClass>();
+            NpgsqlConnection conn = Conexion.Crear_conexion();
+            try
+            {
+                foreach (EspecialidadesDerivadoresClass relacion_select in list_selection_derivador)
+                {
+                    string sql = "SELECT * FROM relacion_derivadores WHERE id_especialidad = @Id_especialidad";
+
+                    NpgsqlCommand cmd = new NpgsqlCommand()
+                    {
+                        Connection = conn,
+                        CommandText = sql,
+                        CommandType = CommandType.Text
+                    };
+                    //cmd.Parameters.Add(new NpgsqlParameter("@Id_Padron", padron.Id_Padron));
+                    cmd.Parameters.Add(new NpgsqlParameter("@Id_especialidad", relacion_select.id_especialidad));
+                    //cmd.Parameters.Add(new NpgsqlParameter("@Id_medico_derivador", id_medico_derivador));
+                    NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            RelacionDerivacionClass relacion = new RelacionDerivacionClass();
+                            if (!reader.IsDBNull(0)) { relacion.id_derivacion = reader.GetInt32(0); }
+                            if (!reader.IsDBNull(1)) { relacion.id_especialidad = reader.GetInt32(1); }
+                            if (!reader.IsDBNull(2)) { relacion.id_medico_derivador = reader.GetInt32(2); }
+                            List_Retorno.Add(relacion);
+                        }
+                    }
+                    cmd.Dispose();
+                }                
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                conn.Close();
+                // something went wrong, and you wanna know why
+                throw;
+            }
+            return List_Retorno;
+        }
     }
 }

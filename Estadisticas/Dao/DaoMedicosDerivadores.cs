@@ -118,6 +118,36 @@ namespace Estadisticas.Dao
             return List_Retorno;
         }
 
+        public string Find_Medico_By_Id(int id_medico)
+        {
+            string retorno ="";
+            // define connection string and query
+            //"Data Source=ADMINISTRADOR-P\\SQLEXPRESS;Initial Catalog=Empleados;Integrated Security=True";
+            string query = "SELECT * FROM Medicos_derivadores WHERE id_medico_derivador = @Id_Medico";
+            //int rowsAffected = 0;
+            // create connection and command in "using" blocks
+            using (NpgsqlConnection conn = Conexion.Crear_conexion())
+            using (NpgsqlCommand cmd = new NpgsqlCommand(query, conn))
+            {
+                //cmd.Parameters.AddWithValue("@Legajo", legajo);
+                //cmd.Parameters.AddWithValue("@Desde", desde);
+                cmd.Parameters.AddWithValue("@Id_Medico", id_medico);
+                //conn.Open();
+                NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        if (!reader.IsDBNull(1)) { retorno = reader.GetString(1).Trim(); };                        
+                    }
+                }
+                reader.Close();
+                conn.Close();
+            }
+            return retorno;
+        }
+
         public Task<MedicosDerivadoresClass[]> GetMedicosAsync()
         {
             // define connection string and query
