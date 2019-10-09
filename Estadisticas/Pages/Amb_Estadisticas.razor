@@ -8,111 +8,105 @@
 <h3>Estadisticas Ambulatorio</h3>
 
 <EditForm Model="@relacionDerivacionTxt">
-    <p>
-        <Typeahead SearchMethod=@SearchMedico Items=@list_Med @bind-Values=@list_selection_med Placeholder="Medico Derivador" style="width:300px">
-            <SelectedTemplate Context="medico">
-                @medico.Medico
-            </SelectedTemplate>
-            <ResultTemplate Context="medico">
-                @medico.Medico
-            </ResultTemplate>
-        </Typeahead>
-    </p>
-    <p>
-        <Typeahead SearchMethod=@SearchEspeDerivadora Items=@list_Esp @bind-Values=@list_selection_derivador Placeholder="Especialidad Derivador" style="width:300px">
-            <SelectedTemplate Context="especialidad_derivadora">
-                @especialidad_derivadora.Especialidad
-            </SelectedTemplate>
-            <ResultTemplate Context="especialidad_derivadora">
-                @especialidad_derivadora.Especialidad
-            </ResultTemplate>
-        </Typeahead>
-    </p>
-    <p>
-        <Typeahead SearchMethod=@SearchEspeEfectora Items=@list_Esp_Efec @bind-Values=@list_selection_efector Placeholder="Especialidad Efector" style="width:300px">
-            <SelectedTemplate Context="especialidad_efectora">
-                @especialidad_efectora.Especialidad_Efector
-            </SelectedTemplate>
-            <ResultTemplate Context="especialidad_efectora">
-                @especialidad_efectora.Especialidad_Efector
-            </ResultTemplate>
-        </Typeahead>
-    </p>
-    <br />
-    <button type="submit" @onclick="procesar">Listar</button>
+    <table>
+        <tr>
+            <td>
+                <Typeahead SearchMethod=@SearchMedico Items=@list_Med @bind-Values=@list_selection_med Placeholder="Medico Derivador" style="width:300px">
+                    <SelectedTemplate Context="medico">
+                        @medico.Medico
+                    </SelectedTemplate>
+                    <ResultTemplate Context="medico">
+                        @medico.Medico
+                    </ResultTemplate>
+                </Typeahead>
+            </td>
+            <td>
+                <Typeahead SearchMethod=@SearchEspeDerivadora Items=@list_Esp @bind-Values=@list_selection_derivador Placeholder="Especialidad Derivador" style="width:300px">
+                    <SelectedTemplate Context="especialidad_derivadora">
+                        @especialidad_derivadora.Especialidad
+                    </SelectedTemplate>
+                    <ResultTemplate Context="especialidad_derivadora">
+                        @especialidad_derivadora.Especialidad
+                    </ResultTemplate>
+                </Typeahead>
+            </td>
+            <td>
+                <Typeahead SearchMethod=@SearchEspeEfectora Items=@list_Esp_Efec @bind-Values=@list_selection_efector Placeholder="Especialidad Efector" style="width:300px">
+                    <SelectedTemplate Context="especialidad_efectora">
+                        @especialidad_efectora.Especialidad_Efector
+                    </SelectedTemplate>
+                    <ResultTemplate Context="especialidad_efectora">
+                        @especialidad_efectora.Especialidad_Efector
+                    </ResultTemplate>
+                </Typeahead>
+            </td>
+        </tr>
+    </table>
+    <button type="submit" class="btn-primary" @onclick="procesar">Listar</button>
 </EditForm>
 
+<div class="list-group-item-dark" style="font-size:12px">
+    @if (list_estadisticas == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <BlazorDataGrid Items="@list_estadisticas" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate" ShowPageSelector="true" PageSelector="@PageSelector">
+            <BlazorDataGridColumn>
+                <DataGridColumn Items="@list_estadisticas" ColumnName="fecha" Filter="true"><strong>Fecha</strong></DataGridColumn>
+                <DataGridColumn Items="@list_estadisticas" ColumnName="paciente" DisplayColumnName="Paciente" Filter="true"></DataGridColumn>
+                <DataGridColumn Items="@list_estadisticas" ColumnName="cobertura" DisplayColumnName="Cobertura"></DataGridColumn>
+                <DataGridColumn Items="@list_estadisticas" ColumnName="codigo" DisplayColumnName="Codigo"></DataGridColumn>
+                <DataGridColumn Items="@list_estadisticas" ColumnName="descripcion" DisplayColumnName="Descripcion"></DataGridColumn>
+                <DataGridColumn Items="@list_estadisticas" ColumnName="cantidad" DisplayColumnName="Cantidad"></DataGridColumn>
+                <DataGridColumn Items="@list_estadisticas" ColumnName="efector" DisplayColumnName="Efector"></DataGridColumn>
+                <DataGridColumn Items="@list_estadisticas" ColumnName="especialidad" DisplayColumnName="Especialidad"></DataGridColumn>
+                <DataGridColumn Items="@list_estadisticas" ColumnName="derivador" DisplayColumnName="Derivador"></DataGridColumn>
+                <DataGridColumn Items="@list_estadisticas" ColumnName="grupo" DisplayColumnName="Grupo"></DataGridColumn>
+            </BlazorDataGridColumn>
+            <GridRow>
+                <td>@context.fecha.ToShortDateString()</td>
+                <td>@context.paciente</td>
+                <td>@context.cobertura</td>
+                <td>@context.codigo</td>
+                <td>@context.descripcion</td>
+                <td>@context.cantidad</td>
+                <td>@context.efector</td>
+                <td>@context.especialidad</td>
+                <td>@context.derivador</td>
+                <td>@context.grupo</td>
+            </GridRow>
+        </BlazorDataGrid>
 
+    }
 
-
-@if (list_estadisticas == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <BlazorDataGrid Items="@list_estadisticas" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate" ShowPageSelector="true" PageSelector="@PageSelector">
-        <BlazorDataGridColumn>
-            <DataGridColumn Items="@list_estadisticas" ColumnName="fecha" Filter="true"><strong>Fecha</strong></DataGridColumn>
-            <DataGridColumn Items="@list_estadisticas" ColumnName="paciente" DisplayColumnName="Paciente" Filter="true"></DataGridColumn>
-            <DataGridColumn Items="@list_estadisticas" ColumnName="cobertura" DisplayColumnName="Cobertura" ></DataGridColumn>
-            <DataGridColumn Items="@list_estadisticas" ColumnName="codigo" DisplayColumnName="Codigo"></DataGridColumn>
-            <DataGridColumn Items="@list_estadisticas" ColumnName="descripcion" DisplayColumnName="Descripcion" ></DataGridColumn>
-            <DataGridColumn Items="@list_estadisticas" ColumnName="cantidad" DisplayColumnName="Cantidad"></DataGridColumn>
-            <DataGridColumn Items="@list_estadisticas" ColumnName="efector" DisplayColumnName="Efector"></DataGridColumn>
-            <DataGridColumn Items="@list_estadisticas" ColumnName="especialidad" DisplayColumnName="Especialidad" ></DataGridColumn>
-            <DataGridColumn Items="@list_estadisticas" ColumnName="derivador" DisplayColumnName="Derivador"></DataGridColumn>
-            <DataGridColumn Items="@list_estadisticas" ColumnName="grupo" DisplayColumnName="Grupo"></DataGridColumn>
-        </BlazorDataGridColumn>
-        <GridRow>
-            <td>@context.fecha.ToShortDateString()</td>
-            <td>@context.paciente</td>
-            <td>@context.cobertura</td>
-            <td>@context.codigo</td>
-            <td>@context.descripcion</td>
-            <td>@context.cantidad</td>
-            <td>@context.efector</td>
-            <td>@context.especialidad</td>
-            <td>@context.derivador</td>
-            <td>@context.grupo</td>
-        </GridRow>
-    </BlazorDataGrid>
-    /*<table class="table">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Paciente</th>
-                <th>Cobertura</th>
-                <th>Codigo</th>
-                <th>Descripcion</th>
-                <th>Cantidad</th>
-                <th>Efector</th>
-                <th>Especialidad</th>
-                <th>Derivador</th>
-                <th>Grupo</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var estadisticas in list_estadisticas)
-            {
-                <tr>
-                    <td>@estadisticas.fecha.ToShortDateString()</td>
-                    <td>@estadisticas.paciente</td>
-                    <td>@estadisticas.cobertura</td>
-                    <td>@estadisticas.codigo</td>
-                    <td>@estadisticas.descripcion</td>
-                    <td>@estadisticas.cantidad</td>
-                    <td>@estadisticas.efector</td>
-                    <td>@estadisticas.especialidad</td>
-                    <td>@estadisticas.derivador</td>
-                    <td>@estadisticas.grupo</td>
-                </tr>
-            }
-        </tbody>
-    </table>*/
-}
+</div>
+<div>
+    @if (custRegionQuery_1 == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+<BlazorDataGrid Items="@custRegionQuery_1" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate" ShowPageSelector="true" PageSelector="@PageSelector">
+    <BlazorDataGridColumn>
+        <DataGridColumn Items="@custRegionQuery_1" ColumnName="Cobertura" DisplayColumnName="Cobertura"></DataGridColumn>
+        <DataGridColumn Items="@custRegionQuery_1" ColumnName="Codigo" DisplayColumnName="Prestacion"></DataGridColumn>
+        <DataGridColumn Items="@custRegionQuery_1" ColumnName="Cantidad" DisplayColumnName="Cantidad"></DataGridColumn>
+    </BlazorDataGridColumn>
+    <GridRow>
+        <td>@context.Cobertura</td>
+        <td>@context.Codigo</td>
+        <td>@context.Cantidad</td>
+    </GridRow>
+</BlazorDataGrid>
+    }
+</div>
 
 @code {
+    List<AmbListClass> custRegionQuery;
+    List<ResumenAmbClasscs> custRegionQuery_1;
     RelacionDerivacionTextClass relacionDerivacionTxt = new RelacionDerivacionTextClass();
     DaoMedicosDerivadores daoMedicoDerivador = new DaoMedicosDerivadores();
     DaoEspecialidadesDerivadores daoEspecialidadesDerivadores = new DaoEspecialidadesDerivadores();
@@ -140,6 +134,26 @@ else
         list_estadisticas = new List<AmbListClass>();
         DaoAmbEstadisticas daoAmbEstadisticas = new DaoAmbEstadisticas();
         list_estadisticas = daoAmbEstadisticas.Estadisticas_Ambulatoria(list_selection_med, list_selection_derivador, list_selection_efector);
+        custRegionQuery = list_estadisticas;
+        custRegionQuery_1 = new List<ResumenAmbClasscs>();
+        var resumenProductos = from p in custRegionQuery
+                               group p by new { p.cobertura, p.codigo, p.cantidad } into g
+                               select new ResumenAmbClasscs
+                               {
+                                   Cobertura = g.Key.cobertura,
+                                   Codigo = g.Key.codigo,
+                                   Cantidad = g.Sum(x => x.cantidad)
+                               };
+
+
+
+        var temp = from item in resumenProductos
+                   group item by item.Codigo into g
+                   select new ResumenAmbClasscs {                       
+                       Codigo = g.Key,
+                       Cantidad = g.Count()
+                   };
+        custRegionQuery_1 = resumenProductos.ToList();
     }
 
     Task<IEnumerable<MedicosDerivadoresClass>> SearchMedico(string searchText)
@@ -160,7 +174,7 @@ else
         return Task.FromResult<IEnumerable<EspecialidadesEfectoresClass>>(result);
     }
 
-    private Dictionary<string, string> translate = new Dictionary<string, string>
+    Dictionary<string, string> translate = new Dictionary<string, string>
 {
         {"next", "Siguiente" },
         {"previous", "Anterior" },
@@ -172,7 +186,7 @@ else
         {"selector", "Registros por Pagina:"}
     };
 
-    private Dictionary<string, int> PageSelector = new Dictionary<string, int>
+    Dictionary<string, int> PageSelector = new Dictionary<string, int>
 {
         {"5", 5 },
         {"10", 10 },

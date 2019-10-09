@@ -39,7 +39,7 @@ namespace Estadisticas.Dao
         public NpgsqlConnection Crear_conexion()
         {
             NpgsqlConnection sql_conexion = null;
-            String config = "Server=201.180.55.57;Port=15432;Database=estadisticas_clinica;User Id=sis-clinica;Password=ElCapo1072;"; // "Server=" + Program.properties.servidor + ";Port=" + Program.properties.puerto + ";Database=" + Program.properties.catalogo + ";User Id=postgres;Password=elcapo9242; Timeout=10;"; //Config();
+            String config = "Server=10.10.0.38;Port=5432;Database=estadisticas_clinica;User Id=sis-clinica;Password=ElCapo1072;"; // "Server=" + Program.properties.servidor + ";Port=" + Program.properties.puerto + ";Database=" + Program.properties.catalogo + ";User Id=postgres;Password=elcapo9242; Timeout=10;"; //Config();
             if (!config.Equals("Error"))
             {
                 sql_conexion = new NpgsqlConnection(config);

@@ -34,9 +34,20 @@ namespace Estadisticas.Data
                         {
                             case 1:
                                 if (cell.Contains('.'))
+                                {
                                     dt.Rows[dt.Rows.Count - 1][i] = int.Parse(cell.Substring(0, cell.IndexOf('.'))); //Contains decimal separator
+                                }
                                 else
-                                    dt.Rows[dt.Rows.Count - 1][i] = int.Parse(cell); //Contains only numbers, no decimal separator.
+                                {
+                                    if (cell.Contains('M'))
+                                    {
+                                        //dt.Rows[dt.Rows.Count - 1][i] = int.Parse(cell); //Contains only numbers, no decimal separator.
+                                    }
+                                    else
+                                    {
+                                        dt.Rows[dt.Rows.Count - 1][i] = int.Parse(cell); //Contains only numbers, no decimal separator.
+                                    }
+                                }
                                 break;
                             case 2:
                                 if (cell.Length > 10)
@@ -116,7 +127,7 @@ namespace Estadisticas.Data
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine(ex.Message);
                 // Exception handling here:  Response.Write("Ex.: " + ex.Message);
             }
             return retorno;

@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  estadisticas:
+    image: ${DOCKER_REGISTRY-}estadisticas
+    build:
+      context: .
+      dockerfile: Estadisticas/Dockerfile
