@@ -25,7 +25,8 @@ namespace Estadisticas
                         serverOptions.ConfigureHttpsDefaults(listenOptions =>
                         {
                             // certificate is an X509Certificate2
-                            listenOptions.ServerCertificate = CreateSelfSignedCert("app-server.clinicaconstituyentes.com", "elcapo1072", "certificate.pfx","Clinica Constituyentes");
+                            listenOptions.ServerCertificate = CreateSelfSignedCert("app-server.clinicaconstituyentes.com", "elcapo1072", "certificate.pfx","Clinica Constituyentes"
+                                ,null,null,null,true,"AR","ClinicaConstituyentes",null);
                         });
                     })
                     .UseStartup<Startup>();
@@ -49,8 +50,8 @@ namespace Estadisticas
                 }
             }
 
-            if (CountryCode.Length != 2) CountryCode = "US";
-            if (OrganizationalUnits == null) OrganizationalUnits = new[] { "Copyright (c), " + DateTime.UtcNow.ToString("yyyy") + " JCCE" };
+            if (CountryCode.Length != 2) CountryCode = "AR";
+            if (OrganizationalUnits == null) OrganizationalUnits = new[] { "Copyright (c), " + DateTime.UtcNow.ToString("yyyy") + " Clinica Constituyentes" };
             var dn = new StringBuilder();
             dn.Append("CN=\"" + CommonName.Replace("\"", "\"\"") + "\"");
             foreach (var ou in OrganizationalUnits)
@@ -59,7 +60,7 @@ namespace Estadisticas
             }
             dn.Append(",O=\"" + Organization.Replace("\"", "\"\"") + "\"");
             dn.Append(",C=" + CountryCode.ToUpper());
-            dn.Append(",C=" + "JP");
+            dn.Append(",C=" + "Clinica Constituyentes");
 
             var strDn = dn.ToString();
             X500DistinguishedName distinguishedName = new X500DistinguishedName(strDn);
