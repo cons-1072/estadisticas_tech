@@ -25,7 +25,7 @@ namespace Estadisticas
                         serverOptions.ConfigureHttpsDefaults(listenOptions =>
                         {
                             // certificate is an X509Certificate2
-                            listenOptions.ServerCertificate = CreateSelfSignedCert("app-server", "elcapo1072", "certificate.pfx","Clinica Constituyentes");
+                            listenOptions.ServerCertificate = CreateSelfSignedCert("app-server.clinicaconstituyentes.com", "elcapo1072", "certificate.pfx","Clinica Constituyentes");
                         });
                     })
                     .UseStartup<Startup>();
@@ -38,7 +38,7 @@ namespace Estadisticas
             {
                 sanBuilder.AddIpAddress(IPAddress.Loopback);
                 sanBuilder.AddIpAddress(IPAddress.IPv6Loopback);
-                sanBuilder.AddDnsName("localhost");
+                sanBuilder.AddDnsName("app-server.clinicaconstituyentes.com");
                 sanBuilder.AddDnsName(Environment.MachineName);
             }
             else
