@@ -24,6 +24,8 @@ namespace Estadisticas
                     {
                         serverOptions.ConfigureHttpsDefaults(listenOptions =>
                         {
+                            serverOptions.Listen(IPAddress.Loopback, 80);
+                            serverOptions.Listen(IPAddress.Loopback, 443);
                             // certificate is an X509Certificate2
                             listenOptions.ServerCertificate = CreateSelfSignedCert("app-server.clinicaconstituyentes.com", "elcapo1072", "certificate.pfx","Clinica Constituyentes"
                                 ,null,null,null,true,"AR","ClinicaConstituyentes",null);
