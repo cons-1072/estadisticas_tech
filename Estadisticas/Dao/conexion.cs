@@ -58,6 +58,7 @@ namespace Estadisticas.Dao
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine(ex.Message);
                     sql_conexion.Close();
                     sql_conexion = null;
                 }

@@ -36,6 +36,7 @@ namespace Estadisticas.Dao
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 conn.Close();
                 // something went wrong, and you wanna know why
                 retorno = false;
@@ -78,6 +79,7 @@ namespace Estadisticas.Dao
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 conn.Close();
                 // something went wrong, and you wanna know why
                 retorno = false;
@@ -124,6 +126,7 @@ namespace Estadisticas.Dao
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 conn.Close();
                 // something went wrong, and you wanna know why
                 throw;

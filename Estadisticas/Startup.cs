@@ -39,6 +39,7 @@ namespace Estadisticas
             services.AddSingleton<WeatherForecastService>();
             services.AddBlazoredToast();
             services.AddScoped<AppState, AppState>();
+            services.AddSingleton<PdfService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,7 +47,7 @@ namespace Estadisticas
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();                
             }
             else
             {
