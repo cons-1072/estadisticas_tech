@@ -95,7 +95,7 @@
     }
     else
     {
-        <BlazorDataGrid Items="@custRegionQuery_1" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate" ShowPageSelector="true" PageSelector="@PageSelector">
+        <BlazorDataGrid Items="@custRegionQuery_1" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true" PageSelector="@PageSelector_res">
             <BlazorDataGridColumn>
                 <DataGridColumn Items="@custRegionQuery_1" ColumnName="Cobertura" DisplayColumnName="Cobertura"></DataGridColumn>
                 <DataGridColumn Items="@custRegionQuery_1" ColumnName="Codigo" DisplayColumnName="Prestacion"></DataGridColumn>
@@ -216,6 +216,27 @@
     };
 
     Dictionary<string, int> PageSelector = new Dictionary<string, int>
+{
+        {"5", 5 },
+        {"10", 10 },
+        {"20", 20 },
+        {"30", 30 },
+        {"All", 0 }
+    };
+
+    Dictionary<string, string> translate_res = new Dictionary<string, string>
+{
+        {"next", "Siguiente" },
+        {"previous", "Anterior" },
+        {"pages", "Pagina __curpage__ de __totalpages__" },
+        {"totalresult", "__totalcount__ Registros" },
+        {"totalresultplural", "__totalcount__ Registros"},
+        {"filteredresults", "__filteredcount__ resultados de __totalcount__ Registros" },
+        {"filteredresultsplural", "__filteredcount__ resultados de __totalcount__ Registros"  },
+        {"selector", "Registros por Pagina:"}
+    };
+
+    Dictionary<string, int> PageSelector_res = new Dictionary<string, int>
 {
         {"5", 5 },
         {"10", 10 },

@@ -111,6 +111,52 @@ namespace Estadisticas.Dao
                         }
                     }
                 }
+                if (list_selection_med == null && list_selection_derivador == null && list_selection_efector != null)
+                {
+                    //DaoRelacionDerivadores daoRelacionDerivadores = new DaoRelacionDerivadores();
+                    //List<RelacionDerivacionClass> relacion = daoRelacionDerivadores.list_relacion(list_selection_derivador);
+                    foreach (EspecialidadesEfectoresClass espe_efe in list_selection_efector)
+                    {
+                        if (espe_efe.Especialidad_Efector != "")
+                        {
+                            List<AmbListClass> List_Retorno_tmp = new List<AmbListClass>();
+                            string sql = "SELECT fecha,paciente,cobertura,codigo,descripcion,cantidad,efector,especialidad,derivador,grupo,vino FROM amb_estadistic_tech "
+                                        + "WHERE especialidad = @Especialidad AND vino = true Order By fecha, derivador";
+
+                            NpgsqlCommand cmd = new NpgsqlCommand()
+                            {
+                                Connection = conn,
+                                CommandText = sql,
+                                CommandType = CommandType.Text
+                            };
+                            //cmd.Parameters.Add(new NpgsqlParameter("@Especialidad", .Trim().ToUpper()));
+                            cmd.Parameters.Add(new NpgsqlParameter("@Especialidad", espe_efe.Especialidad_Efector.Trim()));
+                            NpgsqlDataReader reader = cmd.ExecuteReader();
+
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    AmbListClass list = new AmbListClass();
+                                    if (!reader.IsDBNull(0)) { list.fecha = reader.GetDateTime(0); };
+                                    if (!reader.IsDBNull(1)) { list.paciente = reader.GetString(1).Trim(); };
+                                    if (!reader.IsDBNull(2)) { list.cobertura = reader.GetString(2).Trim(); };
+                                    if (!reader.IsDBNull(3)) { list.codigo = reader.GetInt32(3); };
+                                    if (!reader.IsDBNull(4)) { list.descripcion = reader.GetString(4).Trim(); };
+                                    if (!reader.IsDBNull(5)) { list.cantidad = reader.GetInt32(5); };
+                                    if (!reader.IsDBNull(6)) { list.efector = reader.GetString(6).Trim(); };
+                                    if (!reader.IsDBNull(7)) { list.especialidad = reader.GetString(7).Trim(); };
+                                    if (!reader.IsDBNull(8)) { list.derivador = reader.GetString(8).Trim(); };
+                                    if (!reader.IsDBNull(9)) { list.grupo = reader.GetString(9).Trim(); };
+                                    List_Retorno_tmp.Add(list);
+                                }
+                            }
+                            reader.Close();
+                            //conn.Close();
+                            List_Retorno.AddRange(List_Retorno_tmp);
+                        }
+                    }
+                }
                 conn.Close();
 
                 //Filtro por especialidad efectora
