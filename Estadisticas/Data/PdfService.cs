@@ -11,7 +11,7 @@ namespace Estadisticas.Data
 {
     public class PdfService
     {
-        public MemoryStream CreatePdf(List<AmbListClass> dataTable)
+        public MemoryStream CreatePdf(List<AmbListExportrClass> dataTable)
         {
             if (dataTable == null)
             {
@@ -20,9 +20,11 @@ namespace Estadisticas.Data
             //Create a new PDF document
             using (PdfDocument pdfDocument = new PdfDocument())
             {
+                pdfDocument.PageSettings.Size = PdfPageSize.Legal;
+                pdfDocument.PageSettings.Orientation = PdfPageOrientation.Landscape;
 
-                int paragraphAfterSpacing = 8;
-                int cellMargin = 8;
+                int paragraphAfterSpacing = 4;
+                int cellMargin = 4;
 
                 //Add page to the PDF document
                 PdfPage page = pdfDocument.Pages.Add();
@@ -51,16 +53,43 @@ namespace Estadisticas.Data
                 //Applying built-in style to the PDF grid
                 pdfGrid.ApplyBuiltinStyle(PdfGridBuiltinStyle.GridTable4Accent1);
 
-                //Assign data source
+                //Assign data source                
                 pdfGrid.DataSource = dataTable;
+                PdfStandardFont font_grid = new PdfStandardFont(PdfFontFamily.TimesRoman, 8);                
 
-                pdfGrid.Style.Font = contentFont;
+                pdfGrid.Columns[0].Width = 60;
+                pdfGrid.Columns[1].Width = 120;
+                pdfGrid.Columns[2].Width = 120;
+                pdfGrid.Columns[3].Width = 120;
+                pdfGrid.Columns[4].Width = 50;
+                pdfGrid.Columns[5].Width = 110;
+                pdfGrid.Columns[6].Width = 50;
+                pdfGrid.Columns[7].Width = 100;
+                pdfGrid.Columns[8].Width = 100;
+                pdfGrid.Columns[9].Width = 50;
+                pdfGrid.Columns[10].Width = 80;
+
+                /*PdfGridHeaderCollection collection = pdfGrid.Headers;
+                // Set the header names.
+                collection[0].Cells[0].Value = "Fecha";
+                collection[0].Cells[1].Value = "Cobertura";
+                collection[0].Cells[2].Value = "Paciente";
+                collection[0].Cells[3].Value = "Especialidad";
+                collection[0].Cells[4].Value = "Codigo";
+                collection[0].Cells[5].Value = "Descripcion";
+                collection[0].Cells[6].Value = "Cantidad";
+                collection[0].Cells[7].Value = "Efector";
+                collection[0].Cells[8].Value = "Derivador";
+                collection[0].Cells[9].Value = "Matricula";
+                collection[0].Cells[10].Value = "Grupo";*/
+
+                pdfGrid.Style.Font = font_grid;
 
                 //Draw PDF grid into the PDF page
                 pdfGrid.Draw(page, new Syncfusion.Drawing.PointF(0, result.Bounds.Bottom + paragraphAfterSpacing));
 
                 int pageCount = pdfDocument.Pages.Count;
-                for (int x = 0; x > pageCount; x++)
+                for (int x = 0; x < pageCount; x++)
                 {
                     PdfStandardFont font_water_mark = new PdfStandardFont(PdfFontFamily.TimesRoman, 48);
                     PdfPageBase loadedPage = pdfDocument.Pages[x];
@@ -68,7 +97,7 @@ namespace Estadisticas.Data
                     PdfGraphicsState state = graphics.Save();
                     graphics.SetTransparency(0.25f);
                     graphics.RotateTransform(-40);
-                    graphics.DrawString("COMPUTOS", font_water_mark, PdfPens.Red, PdfBrushes.Red, new PointF(-150, 450));
+                    graphics.DrawString("COMPUTOS", font_water_mark, PdfPens.Red, PdfBrushes.Red, new PointF(-70, 350));
                 }
 
                 using (MemoryStream stream = new MemoryStream())
@@ -124,13 +153,19 @@ namespace Estadisticas.Data
                 //Assign data source
                 pdfGrid.DataSource = dataTable;
 
+                PdfGridHeaderCollection collection = pdfGrid.Headers;
+                // Set the header names.
+                collection[0].Cells[0].Value = "Cobertura";
+                collection[0].Cells[1].Value = "Codigo";
+                collection[0].Cells[2].Value = "Cantidad";
+
                 pdfGrid.Style.Font = contentFont;
 
                 //Draw PDF grid into the PDF page
                 pdfGrid.Draw(page, new Syncfusion.Drawing.PointF(0, result.Bounds.Bottom + paragraphAfterSpacing));
 
                 int pageCount = pdfDocument.Pages.Count;
-                for (int x=0; x > pageCount; x++)
+                for (int x=0; x < pageCount; x++)
                 {
                     PdfStandardFont font_water_mark = new PdfStandardFont(PdfFontFamily.TimesRoman, 48);
                     PdfPageBase loadedPage = pdfDocument.Pages[x];
@@ -138,7 +173,7 @@ namespace Estadisticas.Data
                     PdfGraphicsState state = graphics.Save();
                     graphics.SetTransparency(0.25f);
                     graphics.RotateTransform(-40);
-                    graphics.DrawString("COMPUTOS", font_water_mark, PdfPens.Red, PdfBrushes.Red, new PointF(-150, 450));
+                    graphics.DrawString("COMPUTOS", font_water_mark, PdfPens.Red, PdfBrushes.Red, new PointF(-70, 350));
                 }
 
                 using (MemoryStream stream = new MemoryStream())

@@ -166,7 +166,12 @@
 
     protected async Task export()
     {
-        using (MemoryStream excelStream = pdfService.CreatePdf(list_estadisticas))
+        List<AmbListExportrClass> listEsport = list_estadisticas.Select(x => new AmbListExportrClass { Fecha = x.fecha.ToShortDateString(),
+            Cobertura = x.cobertura, Paciente= x.paciente,
+            Especialidad = x.especialidad, Codigo = x.codigo,
+             Descripcion = x.descripcion, Cantidad = x.cantidad, Efector = x.efector, Derivador = x.derivador, Matricula = x.derivador_matricula,
+            Grupo = x.grupo}).ToList();
+        using (MemoryStream excelStream = pdfService.CreatePdf(listEsport))
         {
             await JS.SaveAs("estadisticas_amb.pdf", excelStream.ToArray());
         }

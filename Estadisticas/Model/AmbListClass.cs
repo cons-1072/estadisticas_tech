@@ -21,4 +21,19 @@ namespace Estadisticas.Model
         public string derivador_matricula { get; set; }
         public string grupo { get; set; }        
     }
+
+    public class AmbListExportrClass
+    {
+        public string Fecha { get; set; }
+        public string Cobertura { get; set; }
+        public string Paciente { get; set; }
+        public string Especialidad { get; set; }
+        public int Codigo { get; set; }
+        public string Descripcion { get; set; }
+        public int Cantidad { get; set; }
+        public string Efector { get; set; }
+        public string Derivador { get; set; }
+        public string Matricula { get; set; }
+        public string Grupo { get; set; }
+    }
 }
