@@ -28,13 +28,13 @@ namespace Estadisticas
                             serverOptions.Listen(IPAddress.Loopback, 443);
                             // certificate is an X509Certificate2
                             listenOptions.ServerCertificate = CreateSelfSignedCert("app-server.clinicaconstituyentes.com", "elcapo1072", "certificate.pfx","Clinica Constituyentes"
-                                ,null,null,null,true,"AR","ClinicaConstituyentes",null);
+                                ,null,null,null,true,"AR","Clinica Constituyentes",null);
                         });
                     })
                     .UseStartup<Startup>();
                 });
 
-        public static X509Certificate2 CreateSelfSignedCert(string CommonName, string Password, string Destination, string FriendlyName = null, string[] DnsNames = null, DateTime? ExpirationBefore = null, DateTime? ExpirationAfter = null, bool IsCertificateAuthority = false, string CountryCode = "US", string Organization = "JCCE", string[] OrganizationalUnits = null)
+        public static X509Certificate2 CreateSelfSignedCert(string CommonName, string Password, string Destination, string FriendlyName = null, string[] DnsNames = null, DateTime? ExpirationBefore = null, DateTime? ExpirationAfter = null, bool IsCertificateAuthority = false, string CountryCode = "AR", string Organization = "Clinica Constituyentes", string[] OrganizationalUnits = null)
         {
             SubjectAlternativeNameBuilder sanBuilder = new SubjectAlternativeNameBuilder();
             if (DnsNames == null)
