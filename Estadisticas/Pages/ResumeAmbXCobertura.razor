@@ -6,8 +6,6 @@
 @using Estadisticas.Data;
 @inject Microsoft.JSInterop.IJSRuntime JS;
 @inject Estadisticas.Data.PdfService pdfService;
-@inject Estadisticas.Model.ResumenAmbCoberEvent eventcober;
-
 
 <h3>ResumeAmbXCobertura</h3>
 <div style="font-size:12px")>
@@ -58,7 +56,7 @@
 
     void ParameterSet()
     {
-        resumenxcobertura_list = eventcober.Sets_List;
+        //resumenxcobertura_list = eventcober.Sets_List;
     }
 
     protected async Task export_resumen()
