@@ -1,0 +1,92 @@
+﻿@page "/ResumenAmbXCobertura"
+
+@using System.IO;
+@using BlazorDataGrid;
+@using Estadisticas.Model;
+@using Estadisticas.Data;
+@inject Microsoft.JSInterop.IJSRuntime JS;
+@inject Estadisticas.Data.PdfService pdfService;
+@inject Estadisticas.Model.ResumenAmbCoberEvent eventcober;
+
+
+<h3>ResumeAmbXCobertura</h3>
+<div style="font-size:12px")>
+    @if (resumenxcobertura_list == null)
+    {
+    <button @onclick="ParameterSet">Resumen X Cobertura</button>
+    }
+    else
+    {
+        <BlazorDataGrid Items="@resumenxcobertura_list" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true" PageSelector="@PageSelector_res">
+            <BlazorDataGridColumn>
+                <DataGridColumn Items="@resumenxcobertura_list" ColumnName="Cobertura" DisplayColumnName="Cobertura"></DataGridColumn>
+            </BlazorDataGridColumn>
+            <GridRow>
+                <td>@context.Cobertura</td>
+                <td>
+                    @if (context.Codigo != null)
+                        {
+                        <BlazorDataGrid Items="@context.Codigo" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true">
+                            <BlazorDataGridColumn>
+                                <DataGridColumn Items="@context.Codigo" ColumnName="Codigo" DisplayColumnName="Codigo"></DataGridColumn>
+                                <DataGridColumn Items="@context.Codigo" ColumnName="Cantidad" DisplayColumnName="Descripcion"></DataGridColumn>
+                                <DataGridColumn Items="@context.Codigo" ColumnName="Cantidad" DisplayColumnName="Cantidad"></DataGridColumn>
+                            </BlazorDataGridColumn>
+                            <GridRow Context="detail">
+                    <td>@detail.Codigo</td>
+                    <td>@detail.Descripcion</td>
+                    <td>@detail.Cantidad</td>
+                </GridRow>
+            </BlazorDataGrid>
+            }
+        /**/
+                    /**/
+                    /**/
+                    /**/
+                    </td>
+                    </GridRow>
+                    </BlazorDataGrid>
+                    <button type="submit" class="btn-primary" @onclick="export_resumen">Exportar</button>
+                }
+
+</div>
+@code {
+    [CascadingParameter] 
+    Amb_Estadisticas amb_Estadisticas { get; set; }
+
+    List<ResumenAmbClasscs> resumenxcobertura_list;
+
+    void ParameterSet()
+    {
+        resumenxcobertura_list = eventcober.Sets_List;
+    }
+
+    protected async Task export_resumen()
+    {
+        using (MemoryStream excelStream = pdfService.CreatePdf_Resumen(resumenxcobertura_list))
+        {
+            await JS.SaveAs("resumen_amb.pdf", excelStream.ToArray());
+        }
+    }
+
+    Dictionary<string, string> translate_res = new Dictionary<string, string>
+{
+        {"next", "Siguiente" },
+        {"previous", "Anterior" },
+        {"pages", "Pagina __curpage__ de __totalpages__" },
+        {"totalresult", "__totalcount__ Registros" },
+        {"totalresultplural", "__totalcount__ Registros"},
+        {"filteredresults", "__filteredcount__ resultados de __totalcount__ Registros" },
+        {"filteredresultsplural", "__filteredcount__ resultados de __totalcount__ Registros"  },
+        {"selector", "Registros por Pagina:"}
+    };
+
+    Dictionary<string, int> PageSelector_res = new Dictionary<string, int>
+{
+        {"5", 5 },
+        {"10", 10 },
+        {"20", 20 },
+        {"30", 30 },
+        {"All", 0 }
+    };
+}

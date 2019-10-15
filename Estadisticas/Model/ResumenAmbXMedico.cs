@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace Estadisticas.Model
 {
-    public class ResumenAmbClasscs
+    public class ResumenAmbXMedico
     {
-        public string Cobertura { get; set; }
-        public List<ResumenCodicoAmbClass> Codigo { get; set; }
+        public string Medico { get; set; }
+        public List<ResumenCodicoAmbXMedico> Codigo { get; set; }
     }
 
-    public class ResumenCodicoAmbClass
+    public class ResumenCodicoAmbXMedico
     {
         public int Codigo { get; set; }
         public string Descripcion { get; set; }

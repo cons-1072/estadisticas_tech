@@ -90,15 +90,15 @@
 
 </div>
 <div style="font-size:12px">
-    @if (custRegionQuery_1 == null)
+    @if (resumenxcobertura_list == null)
     {
         <p><em>Loading...</em></p>
     }
     else
     {
-        <BlazorDataGrid Items="@custRegionQuery_1" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true" PageSelector="@PageSelector_res">
+        <BlazorDataGrid Items="@resumenxcobertura_list" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true" PageSelector="@PageSelector_res">
             <BlazorDataGridColumn>
-                <DataGridColumn Items="@custRegionQuery_1" ColumnName="Cobertura" DisplayColumnName="Cobertura"></DataGridColumn>
+                <DataGridColumn Items="@resumenxcobertura_list" ColumnName="Cobertura" DisplayColumnName="Cobertura"></DataGridColumn>
             </BlazorDataGridColumn>
             <GridRow>
                 <td>@context.Cobertura</td>
@@ -108,10 +108,12 @@
                         <BlazorDataGrid Items="@context.Codigo" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true">
                             <BlazorDataGridColumn>
                                 <DataGridColumn Items="@context.Codigo" ColumnName="Codigo" DisplayColumnName="Codigo"></DataGridColumn>
+                                <DataGridColumn Items="@context.Codigo" ColumnName="Cantidad" DisplayColumnName="Descripcion"></DataGridColumn>
                                 <DataGridColumn Items="@context.Codigo" ColumnName="Cantidad" DisplayColumnName="Cantidad"></DataGridColumn>
                             </BlazorDataGridColumn>
                             <GridRow Context="detail">
                                 <td>@detail.Codigo</td>
+                                <td>@detail.Descripcion</td>
                                 <td>@detail.Cantidad</td>
                             </GridRow>
                         </BlazorDataGrid>
@@ -122,24 +124,60 @@
                     <button type="submit" class="btn-primary" @onclick="export_resumen">Exportar</button>
     }
 </div>
+<div style="font-size:12px">
+    @if (resumenxmedico_list == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <BlazorDataGrid Items="@resumenxmedico_list" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true" PageSelector="@PageSelector_res">
+            <BlazorDataGridColumn>
+                <DataGridColumn Items="@resumenxmedico_list" ColumnName="Medico" DisplayColumnName="Medico"></DataGridColumn>
+            </BlazorDataGridColumn>
+            <GridRow>
+                <td>@context.Medico</td>
+                <td>
+                    @if (context.Codigo != null)
+                    {
+                        <BlazorDataGrid Items="@context.Codigo" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true">
+                            <BlazorDataGridColumn>
+                                <DataGridColumn Items="@context.Codigo" ColumnName="Codigo" DisplayColumnName="Codigo"></DataGridColumn>
+                                <DataGridColumn Items="@context.Codigo" ColumnName="Cantidad" DisplayColumnName="Descripcion"></DataGridColumn>
+                                <DataGridColumn Items="@context.Codigo" ColumnName="Cantidad" DisplayColumnName="Cantidad"></DataGridColumn>
+                            </BlazorDataGridColumn>
+                            <GridRow Context="detail">
+                    <td>@detail.Codigo</td>
+                    <td>@detail.Descripcion</td>
+                    <td>@detail.Cantidad</td>
+                </GridRow>
+            </BlazorDataGrid>
+                    }
+                    </td>
+                    </GridRow>
+                    </BlazorDataGrid>
+                    <button type="submit" class="btn-primary" @onclick="export_resumen">Exportar</button>
+    }
+</div>
+
 
 @code {
-        List<AmbListClass> custRegionQuery;
-        List<ResumenAmbClasscs> custRegionQuery_1;
-        RelacionDerivacionTextClass relacionDerivacionTxt = new RelacionDerivacionTextClass();
-        DaoMedicosDerivadores daoMedicoDerivador = new DaoMedicosDerivadores();
-        DaoEspecialidadesDerivadores daoEspecialidadesDerivadores = new DaoEspecialidadesDerivadores();
-        DaoEspecialidadesEfector daoEspecialidadesEfector = new DaoEspecialidadesEfector();
-        MedicosDerivadoresClass[] list_Med;
-        EspecialidadesDerivadoresClass[] list_Esp;
-        EspecialidadesEfectoresClass[] list_Esp_Efec;
-        List<AmbListClass> list_estadisticas;
-        MedicosDerivadoresClass medico = new MedicosDerivadoresClass();
-        EspecialidadesDerivadoresClass especialidad_derivadora = new EspecialidadesDerivadoresClass();
-        EspecialidadesEfectoresClass especialidad_efectora = new EspecialidadesEfectoresClass();
-        IList<MedicosDerivadoresClass> list_selection_med;
-        IList<EspecialidadesDerivadoresClass> list_selection_derivador;
-        IList<EspecialidadesEfectoresClass> list_selection_efector;
+    List<ResumenAmbClasscs> resumenxcobertura_list;
+    List<ResumenAmbXMedico> resumenxmedico_list;
+    RelacionDerivacionTextClass relacionDerivacionTxt = new RelacionDerivacionTextClass();
+    DaoMedicosDerivadores daoMedicoDerivador = new DaoMedicosDerivadores();
+    DaoEspecialidadesDerivadores daoEspecialidadesDerivadores = new DaoEspecialidadesDerivadores();
+    DaoEspecialidadesEfector daoEspecialidadesEfector = new DaoEspecialidadesEfector();
+    MedicosDerivadoresClass[] list_Med;
+    EspecialidadesDerivadoresClass[] list_Esp;
+    EspecialidadesEfectoresClass[] list_Esp_Efec;
+    List<AmbListClass> list_estadisticas;
+    MedicosDerivadoresClass medico = new MedicosDerivadoresClass();
+    EspecialidadesDerivadoresClass especialidad_derivadora = new EspecialidadesDerivadoresClass();
+    EspecialidadesEfectoresClass especialidad_efectora = new EspecialidadesEfectoresClass();
+    IList<MedicosDerivadoresClass> list_selection_med;
+    IList<EspecialidadesDerivadoresClass> list_selection_derivador;
+    IList<EspecialidadesEfectoresClass> list_selection_efector;
 
     protected override async Task OnInitializedAsync()
     {
@@ -153,17 +191,9 @@
         list_estadisticas = new List<AmbListClass>();
         DaoAmbEstadisticas daoAmbEstadisticas = new DaoAmbEstadisticas();
         list_estadisticas = daoAmbEstadisticas.Estadisticas_Ambulatoria(list_selection_med, list_selection_derivador, list_selection_efector);
-        custRegionQuery = list_estadisticas;
-        custRegionQuery_1 = new List<ResumenAmbClasscs>();
-        /*List<ResumenAmbClasscs> resumenProductos = from p in custRegionQuery
-                                                   group p by new { p.cobertura, p.codigo, p.cantidad } into g
-                                                   select new ResumenAmbClasscs
-                                                   {
-                                                       Cobertura = g.Key.cobertura,
-                                                       Codigo = new List<ResumenCodicoAmbClass> { new ResumenCodicoAmbClass g.SelectMany(gc => gc.codigo, gc => gc.cantidad).toList() }
-                                                   };*/
+        resumenxcobertura_list = new List<ResumenAmbClasscs>();
 
-        var resume_list = custRegionQuery.GroupBy(a => a.cobertura)
+        var resume_list = list_estadisticas.GroupBy(a => a.cobertura)
                                  .Select(codigoGroup => new ResumenAmbClasscs
                                  {
                                      Cobertura = codigoGroup.Key,
@@ -171,19 +201,25 @@
                                                          .Select(cantGroup => new ResumenCodicoAmbClass
                                                          {
                                                              Codigo = cantGroup.Key,
+                                                             Descripcion = cantGroup.First().descripcion,
                                                              Cantidad = cantGroup.Sum(x => x.cantidad)
                                                          }).ToList()
                                  });
 
-        /*var temp = from item in resumenProductos
-                   group item by item.Codigo into g
-                   select new ResumenAmbClasscs
-                   {
-                       Codigo = g.Key,
-                       Cantidad = g.Count()
-                   };*/
-
-        custRegionQuery_1 = resume_list.ToList();
+        var resumexmedico_list = list_estadisticas.GroupBy(a => a.derivador)
+                                 .Select(codigoGroup => new ResumenAmbXMedico
+                                 {
+                                     Medico = codigoGroup.Key,
+                                     Codigo = codigoGroup.GroupBy(a => a.codigo)
+                                                         .Select(cantGroup => new ResumenCodicoAmbXMedico
+                                                         {
+                                                             Codigo = cantGroup.Key,
+                                                             Descripcion = cantGroup.First().descripcion,
+                                                             Cantidad = cantGroup.Sum(x => x.cantidad)
+                                                         }).ToList()
+                                 });
+        resumenxmedico_list = resumexmedico_list.ToList();
+        resumenxcobertura_list = resume_list.ToList();
     }
 
     protected async Task export()
@@ -210,7 +246,7 @@
 
     protected async Task export_resumen()
     {
-        using (MemoryStream excelStream = pdfService.CreatePdf_Resumen(custRegionQuery_1))
+        using (MemoryStream excelStream = pdfService.CreatePdf_Resumen(resumenxcobertura_list))
         {
             await JS.SaveAs("resumen_amb.pdf", excelStream.ToArray());
         }
