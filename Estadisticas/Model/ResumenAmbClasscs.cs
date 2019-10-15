@@ -8,7 +8,12 @@ namespace Estadisticas.Model
     public class ResumenAmbClasscs
     {
         public string Cobertura { get; set; }
+        public List<ResumenCodicoAmbClass> Codigo { get; set; }
+    }
+
+    public class ResumenCodicoAmbClass
+    {
         public int Codigo { get; set; }
-        public int Cantidad {get;set;}
+        public int Cantidad { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿@page "/Amb_Estadisticas"
 
+@using System.IO;
 @using Estadisticas.Model;
 @using Estadisticas.Dao;
 @using LoreSoft.Blazor.Controls;
@@ -8,7 +9,7 @@
 @using Microsoft.AspNetCore.Mvc;
 @inject Estadisticas.Data.PdfService pdfService
 @inject Microsoft.JSInterop.IJSRuntime JS
-@using  System.IO;
+
 
 <h3>Estadisticas Ambulatorio</h3>
 
@@ -98,36 +99,47 @@
         <BlazorDataGrid Items="@custRegionQuery_1" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true" PageSelector="@PageSelector_res">
             <BlazorDataGridColumn>
                 <DataGridColumn Items="@custRegionQuery_1" ColumnName="Cobertura" DisplayColumnName="Cobertura"></DataGridColumn>
-                <DataGridColumn Items="@custRegionQuery_1" ColumnName="Codigo" DisplayColumnName="Prestacion"></DataGridColumn>
-                <DataGridColumn Items="@custRegionQuery_1" ColumnName="Cantidad" DisplayColumnName="Cantidad"></DataGridColumn>
             </BlazorDataGridColumn>
             <GridRow>
                 <td>@context.Cobertura</td>
-                <td>@context.Codigo</td>
-                <td>@context.Cantidad</td>
-            </GridRow>
-        </BlazorDataGrid>
-        <button type="submit" class="btn-primary" @onclick="export_resumen">Exportar</button>
+                <td>
+                    @if (context.Codigo != null)
+                    {
+                        <BlazorDataGrid Items="@context.Codigo" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true">
+                            <BlazorDataGridColumn>
+                                <DataGridColumn Items="@context.Codigo" ColumnName="Codigo" DisplayColumnName="Codigo"></DataGridColumn>
+                                <DataGridColumn Items="@context.Codigo" ColumnName="Cantidad" DisplayColumnName="Cantidad"></DataGridColumn>
+                            </BlazorDataGridColumn>
+                            <GridRow Context="detail">
+                                <td>@detail.Codigo</td>
+                                <td>@detail.Cantidad</td>
+                            </GridRow>
+                        </BlazorDataGrid>
+                    }
+                    </td>
+                    </GridRow>
+                    </BlazorDataGrid>
+                    <button type="submit" class="btn-primary" @onclick="export_resumen">Exportar</button>
     }
 </div>
 
 @code {
-    List<AmbListClass> custRegionQuery;
-    List<ResumenAmbClasscs> custRegionQuery_1;
-    RelacionDerivacionTextClass relacionDerivacionTxt = new RelacionDerivacionTextClass();
-    DaoMedicosDerivadores daoMedicoDerivador = new DaoMedicosDerivadores();
-    DaoEspecialidadesDerivadores daoEspecialidadesDerivadores = new DaoEspecialidadesDerivadores();
-    DaoEspecialidadesEfector daoEspecialidadesEfector = new DaoEspecialidadesEfector();
-    MedicosDerivadoresClass[] list_Med;
-    EspecialidadesDerivadoresClass[] list_Esp;
-    EspecialidadesEfectoresClass[] list_Esp_Efec;
-    List<AmbListClass> list_estadisticas;
-    MedicosDerivadoresClass medico = new MedicosDerivadoresClass();
-    EspecialidadesDerivadoresClass especialidad_derivadora = new EspecialidadesDerivadoresClass();
-    EspecialidadesEfectoresClass especialidad_efectora = new EspecialidadesEfectoresClass();
-    IList<MedicosDerivadoresClass> list_selection_med;
-    IList<EspecialidadesDerivadoresClass> list_selection_derivador;
-    IList<EspecialidadesEfectoresClass> list_selection_efector;
+        List<AmbListClass> custRegionQuery;
+        List<ResumenAmbClasscs> custRegionQuery_1;
+        RelacionDerivacionTextClass relacionDerivacionTxt = new RelacionDerivacionTextClass();
+        DaoMedicosDerivadores daoMedicoDerivador = new DaoMedicosDerivadores();
+        DaoEspecialidadesDerivadores daoEspecialidadesDerivadores = new DaoEspecialidadesDerivadores();
+        DaoEspecialidadesEfector daoEspecialidadesEfector = new DaoEspecialidadesEfector();
+        MedicosDerivadoresClass[] list_Med;
+        EspecialidadesDerivadoresClass[] list_Esp;
+        EspecialidadesEfectoresClass[] list_Esp_Efec;
+        List<AmbListClass> list_estadisticas;
+        MedicosDerivadoresClass medico = new MedicosDerivadoresClass();
+        EspecialidadesDerivadoresClass especialidad_derivadora = new EspecialidadesDerivadoresClass();
+        EspecialidadesEfectoresClass especialidad_efectora = new EspecialidadesEfectoresClass();
+        IList<MedicosDerivadoresClass> list_selection_med;
+        IList<EspecialidadesDerivadoresClass> list_selection_derivador;
+        IList<EspecialidadesEfectoresClass> list_selection_efector;
 
     protected override async Task OnInitializedAsync()
     {
@@ -143,41 +155,60 @@
         list_estadisticas = daoAmbEstadisticas.Estadisticas_Ambulatoria(list_selection_med, list_selection_derivador, list_selection_efector);
         custRegionQuery = list_estadisticas;
         custRegionQuery_1 = new List<ResumenAmbClasscs>();
-        var resumenProductos = from p in custRegionQuery
-                               group p by new { p.cobertura, p.codigo, p.cantidad } into g
-                               select new ResumenAmbClasscs
-                               {
-                                   Cobertura = g.Key.cobertura,
-                                   Codigo = g.Key.codigo,
-                                   Cantidad = g.Sum(x => x.cantidad)
-                               };
+        /*List<ResumenAmbClasscs> resumenProductos = from p in custRegionQuery
+                                                   group p by new { p.cobertura, p.codigo, p.cantidad } into g
+                                                   select new ResumenAmbClasscs
+                                                   {
+                                                       Cobertura = g.Key.cobertura,
+                                                       Codigo = new List<ResumenCodicoAmbClass> { new ResumenCodicoAmbClass g.SelectMany(gc => gc.codigo, gc => gc.cantidad).toList() }
+                                                   };*/
 
+        var resume_list = custRegionQuery.GroupBy(a => a.cobertura)
+                                 .Select(codigoGroup => new ResumenAmbClasscs
+                                 {
+                                     Cobertura = codigoGroup.Key,
+                                     Codigo = codigoGroup.GroupBy(a => a.codigo)
+                                                         .Select(cantGroup => new ResumenCodicoAmbClass
+                                                         {
+                                                             Codigo = cantGroup.Key,
+                                                             Cantidad = cantGroup.Sum(x => x.cantidad)
+                                                         }).ToList()
+                                 });
 
-
-        var temp = from item in resumenProductos
+        /*var temp = from item in resumenProductos
                    group item by item.Codigo into g
                    select new ResumenAmbClasscs
                    {
                        Codigo = g.Key,
                        Cantidad = g.Count()
-                   };
-        custRegionQuery_1 = resumenProductos.ToList();
+                   };*/
+
+        custRegionQuery_1 = resume_list.ToList();
     }
 
     protected async Task export()
     {
-        List<AmbListExportrClass> listEsport = list_estadisticas.Select(x => new AmbListExportrClass { Fecha = x.fecha.ToShortDateString(),
-            Cobertura = x.cobertura, Paciente= x.paciente,
-            Especialidad = x.especialidad, Codigo = x.codigo,
-             Descripcion = x.descripcion, Cantidad = x.cantidad, Efector = x.efector, Derivador = x.derivador, Matricula = x.derivador_matricula,
-            Grupo = x.grupo}).ToList();
+        List<AmbListExportrClass> listEsport = list_estadisticas.Select(x => new AmbListExportrClass
+        {
+            Fecha = x.fecha.ToShortDateString(),
+            Cobertura = x.cobertura,
+            Paciente = x.paciente,
+            Especialidad = x.especialidad,
+            Codigo = x.codigo,
+            Descripcion = x.descripcion,
+            Cantidad = x.cantidad,
+            Efector = x.efector,
+            Derivador = x.derivador,
+            Matricula = x.derivador_matricula,
+            Grupo = x.grupo
+        }).ToList();
         using (MemoryStream excelStream = pdfService.CreatePdf(listEsport))
         {
             await JS.SaveAs("estadisticas_amb.pdf", excelStream.ToArray());
         }
     }
 
-        protected async Task export_resumen()
+    protected async Task export_resumen()
     {
         using (MemoryStream excelStream = pdfService.CreatePdf_Resumen(custRegionQuery_1))
         {

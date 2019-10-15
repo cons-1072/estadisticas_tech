@@ -157,7 +157,6 @@ namespace Estadisticas.Data
                 // Set the header names.
                 collection[0].Cells[0].Value = "Cobertura";
                 collection[0].Cells[1].Value = "Codigo";
-                collection[0].Cells[2].Value = "Cantidad";
 
                 pdfGrid.Style.Font = contentFont;
 
