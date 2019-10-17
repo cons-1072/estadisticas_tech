@@ -11,7 +11,7 @@ namespace Estadisticas.Dao
     {
         conexion Conexion = new conexion();
 
-        public List<AmbListClass> Estadisticas_Ambulatoria(IList<MedicosDerivadoresClass> list_selection_med, IList<EspecialidadesDerivadoresClass> list_selection_derivador, IList<EspecialidadesEfectoresClass> list_selection_efector)
+        public List<AmbListClass> Estadisticas_Ambulatoria(IList<MedicosDerivadoresClass> list_selection_med, IList<EspecialidadesDerivadoresClass> list_selection_derivador, IList<EspecialidadesEfectoresClass> list_selection_efector, DateTime start_date, DateTime end_date)
         {
             DaoMedicosDerivadores daoMedicosDerivadores = new DaoMedicosDerivadores();
             DaoEspecialidadesDerivadores daoEspecialidadesDerivadores = new DaoEspecialidadesDerivadores();
@@ -29,7 +29,7 @@ namespace Estadisticas.Dao
                         {
                             List<AmbListClass> List_Retorno_tmp = new List<AmbListClass>();
                             string sql = "SELECT fecha,paciente,cobertura,codigo,descripcion,cantidad,efector,especialidad,derivador,grupo,vino FROM amb_estadistic_tech "
-                                        + "WHERE derivador = @Derivador AND vino = true Order By fecha, derivador";
+                                        + "WHERE derivador = @Derivador AND vino = true AND fecha BETWEEN @Fecha1 AND @Fecha2 Order By fecha, derivador";
 
                             NpgsqlCommand cmd = new NpgsqlCommand()
                             {
@@ -39,6 +39,8 @@ namespace Estadisticas.Dao
                             };
                             //cmd.Parameters.Add(new NpgsqlParameter("@Especialidad", .Trim().ToUpper()));
                             cmd.Parameters.Add(new NpgsqlParameter("@Derivador", medico.Medico.Trim().ToUpper()));
+                            cmd.Parameters.Add(new NpgsqlParameter("@Fecha1", start_date));
+                            cmd.Parameters.Add(new NpgsqlParameter("@Fecha2", end_date));
                             NpgsqlDataReader reader = cmd.ExecuteReader();
 
                             if (reader.HasRows)
@@ -75,7 +77,7 @@ namespace Estadisticas.Dao
                         {
                             List<AmbListClass> List_Retorno_tmp = new List<AmbListClass>();
                             string sql = "SELECT fecha,paciente,cobertura,codigo,descripcion,cantidad,efector,especialidad,derivador,grupo,vino FROM amb_estadistic_tech "
-                                        + "WHERE derivador = @Derivador AND vino = true Order By fecha, derivador";
+                                        + "WHERE derivador = @Derivador AND vino = true AND fecha BETWEEN @Fecha1 AND @Fecha2 Order By fecha, derivador";
 
                             NpgsqlCommand cmd = new NpgsqlCommand()
                             {
@@ -85,6 +87,8 @@ namespace Estadisticas.Dao
                             };
                             //cmd.Parameters.Add(new NpgsqlParameter("@Especialidad", .Trim().ToUpper()));
                             cmd.Parameters.Add(new NpgsqlParameter("@Derivador", daoMedicosDerivadores.Find_Medico_By_Id(medico.id_medico_derivador)));
+                            cmd.Parameters.Add(new NpgsqlParameter("@Fecha1", start_date));
+                            cmd.Parameters.Add(new NpgsqlParameter("@Fecha2", end_date));
                             NpgsqlDataReader reader = cmd.ExecuteReader();
 
                             if (reader.HasRows)
@@ -121,7 +125,7 @@ namespace Estadisticas.Dao
                         {
                             List<AmbListClass> List_Retorno_tmp = new List<AmbListClass>();
                             string sql = "SELECT fecha,paciente,cobertura,codigo,descripcion,cantidad,efector,especialidad,derivador,grupo,vino FROM amb_estadistic_tech "
-                                        + "WHERE especialidad = @Especialidad AND vino = true Order By fecha, derivador";
+                                        + "WHERE especialidad = @Especialidad AND vino = true AND fecha BETWEEN @Fecha1 AND @Fecha2 Order By fecha, derivador";
 
                             NpgsqlCommand cmd = new NpgsqlCommand()
                             {
@@ -131,6 +135,8 @@ namespace Estadisticas.Dao
                             };
                             //cmd.Parameters.Add(new NpgsqlParameter("@Especialidad", .Trim().ToUpper()));
                             cmd.Parameters.Add(new NpgsqlParameter("@Especialidad", espe_efe.Especialidad_Efector.Trim()));
+                            cmd.Parameters.Add(new NpgsqlParameter("@Fecha1", start_date));
+                            cmd.Parameters.Add(new NpgsqlParameter("@Fecha2", end_date));
                             NpgsqlDataReader reader = cmd.ExecuteReader();
 
                             if (reader.HasRows)

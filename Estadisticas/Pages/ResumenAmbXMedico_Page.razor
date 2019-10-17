@@ -1,29 +1,30 @@
-﻿@page "/ResumenAmbXCobertura"
+﻿@page "/ResumenAmbXMedico_Page"
 
-@using System.IO;
 @using BlazorDataGrid;
-@using Estadisticas.Model;
 @using Estadisticas.Data;
-@inject Microsoft.JSInterop.IJSRuntime JS;
-@inject Estadisticas.Data.PdfService pdfService;
+@using Estadisticas.Model;
+@using System.IO;
 
-<h3>ResumeAmbXCobertura</h3>
-<div style="font-size:12px")>
-    @if (resumenxcobertura_list == null)
+@inject Estadisticas.Data.PdfServiceMulti pdfService
+@inject Microsoft.JSInterop.IJSRuntime JS
+
+<h3>Resumen Por Medico</h3>
+<div style="font-size:12px">
+    @if (resumen_list == null)
     {
-    <button @onclick="ParameterSet">Resumen X Cobertura</button>
+        <p><em>Loading...</em></p>
     }
     else
     {
-        <BlazorDataGrid Items="@resumenxcobertura_list" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true" PageSelector="@PageSelector_res">
+        <BlazorDataGrid Items="@resumen_list" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true" PageSelector="@PageSelector_res">
             <BlazorDataGridColumn>
-                <DataGridColumn Items="@resumenxcobertura_list" ColumnName="Cobertura" DisplayColumnName="Cobertura"></DataGridColumn>
+                <DataGridColumn Items="@resumen_list" ColumnName="Medico" DisplayColumnName="Medico"></DataGridColumn>
             </BlazorDataGridColumn>
             <GridRow>
-                <td>@context.Cobertura</td>
+                <td>@context.Medico</td>
                 <td>
                     @if (context.Codigo != null)
-                        {
+                    {
                         <BlazorDataGrid Items="@context.Codigo" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true">
                             <BlazorDataGridColumn>
                                 <DataGridColumn Items="@context.Codigo" ColumnName="Codigo" DisplayColumnName="Codigo"></DataGridColumn>
@@ -36,34 +37,30 @@
                     <td>@detail.Cantidad</td>
                 </GridRow>
             </BlazorDataGrid>
-            }
-        /**/
-                    /**/
-                    /**/
-                    /**/
+                    }
                     </td>
                     </GridRow>
                     </BlazorDataGrid>
                     <button type="submit" class="btn-primary" @onclick="export_resumen">Exportar</button>
-                }
-
+    }
 </div>
 @code {
-    [CascadingParameter] 
-    Amb_Estadisticas amb_Estadisticas { get; set; }
+    [Parameter]
+    public List<ResumenAmbXMedico> resumen_list { get; set; }
 
-    List<ResumenAmbClasscs> resumenxcobertura_list;
+    [Parameter]
+    public string reusmen_medico { get; set; }
 
-    void ParameterSet()
+    protected override async Task OnParametersSetAsync()
     {
-        //resumenxcobertura_list = eventcober.Sets_List;
+        StateHasChanged();
     }
 
     protected async Task export_resumen()
     {
-        using (MemoryStream excelStream = pdfService.CreatePdf_Resumen(resumenxcobertura_list))
+        using (MemoryStream excelStream = pdfService.CreatePdf_Resumen_Medico(resumen_list, "Medicos", reusmen_medico))
         {
-            await JS.SaveAs("resumen_amb.pdf", excelStream.ToArray());
+            await JS.SaveAs("resumen_amb_med.pdf", excelStream.ToArray());
         }
     }
 
@@ -87,4 +84,5 @@
         {"30", 30 },
         {"All", 0 }
     };
+
 }

@@ -6,16 +6,19 @@
 @using LoreSoft.Blazor.Controls;
 @using BlazorDataGrid;
 @using Estadisticas.Data;
-@using Microsoft.AspNetCore.Mvc;
+@using BlazorDateRangePicker
+
 @inject Estadisticas.Data.PdfService pdfService
 @inject Microsoft.JSInterop.IJSRuntime JS
-
 
 <h3>Estadisticas Ambulatorio</h3>
 
 <EditForm Model="@relacionDerivacionTxt">
     <table>
         <tr>
+            <td>
+                <DateRangePicker ShowOnlyOneCalendar="true" MinDate="DateTimeOffset.Now.AddMonths(-3)" MaxDate="DateTimeOffset.Now" OnRangeSelect="OnRangeSelect" />
+            </td>
             <td>
                 <Typeahead SearchMethod=@SearchMedico Items=@list_Med @bind-Values=@list_selection_med Placeholder="Medico Derivador" style="width:300px">
                     <SelectedTemplate Context="medico">
@@ -85,83 +88,28 @@
             </GridRow>
         </BlazorDataGrid>
         <button type="submit" class="btn-primary" @onclick="export">Exportar</button>
-
-    }
-
-</div>
-<div style="font-size:12px">
-    @if (resumenxcobertura_list == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <BlazorDataGrid Items="@resumenxcobertura_list" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true" PageSelector="@PageSelector_res">
-            <BlazorDataGridColumn>
-                <DataGridColumn Items="@resumenxcobertura_list" ColumnName="Cobertura" DisplayColumnName="Cobertura"></DataGridColumn>
-            </BlazorDataGridColumn>
-            <GridRow>
-                <td>@context.Cobertura</td>
-                <td>
-                    @if (context.Codigo != null)
-                    {
-                        <BlazorDataGrid Items="@context.Codigo" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true">
-                            <BlazorDataGridColumn>
-                                <DataGridColumn Items="@context.Codigo" ColumnName="Codigo" DisplayColumnName="Codigo"></DataGridColumn>
-                                <DataGridColumn Items="@context.Codigo" ColumnName="Cantidad" DisplayColumnName="Descripcion"></DataGridColumn>
-                                <DataGridColumn Items="@context.Codigo" ColumnName="Cantidad" DisplayColumnName="Cantidad"></DataGridColumn>
-                            </BlazorDataGridColumn>
-                            <GridRow Context="detail">
-                                <td>@detail.Codigo</td>
-                                <td>@detail.Descripcion</td>
-                                <td>@detail.Cantidad</td>
-                            </GridRow>
-                        </BlazorDataGrid>
-                    }
-                    </td>
-                    </GridRow>
-                    </BlazorDataGrid>
-                    <button type="submit" class="btn-primary" @onclick="export_resumen">Exportar</button>
     }
 </div>
-<div style="font-size:12px">
-    @if (resumenxmedico_list == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <BlazorDataGrid Items="@resumenxmedico_list" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true" PageSelector="@PageSelector_res">
-            <BlazorDataGridColumn>
-                <DataGridColumn Items="@resumenxmedico_list" ColumnName="Medico" DisplayColumnName="Medico"></DataGridColumn>
-            </BlazorDataGridColumn>
-            <GridRow>
-                <td>@context.Medico</td>
-                <td>
-                    @if (context.Codigo != null)
-                    {
-                        <BlazorDataGrid Items="@context.Codigo" PageSize="5" ShowTotalResult="true" TheadClass="thead-dark" Translation="@translate_res" ShowPageSelector="true">
-                            <BlazorDataGridColumn>
-                                <DataGridColumn Items="@context.Codigo" ColumnName="Codigo" DisplayColumnName="Codigo"></DataGridColumn>
-                                <DataGridColumn Items="@context.Codigo" ColumnName="Cantidad" DisplayColumnName="Descripcion"></DataGridColumn>
-                                <DataGridColumn Items="@context.Codigo" ColumnName="Cantidad" DisplayColumnName="Cantidad"></DataGridColumn>
-                            </BlazorDataGridColumn>
-                            <GridRow Context="detail">
-                    <td>@detail.Codigo</td>
-                    <td>@detail.Descripcion</td>
-                    <td>@detail.Cantidad</td>
-                </GridRow>
-            </BlazorDataGrid>
-                    }
-                    </td>
-                    </GridRow>
-                    </BlazorDataGrid>
-                    <button type="submit" class="btn-primary" @onclick="export_resumen">Exportar</button>
-    }
-</div>
-
+@if (resumenxcobertura_list == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <ResumenAmbXCobertura_Page resumen_list="@resumenxcobertura_list" Esp_resumen="@list_selection_derivador[0].Especialidad"></ResumenAmbXCobertura_Page>
+}
+@if (resumenxmedico_list == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <ResumenAmbXMedico_Page resumen_list="@resumenxmedico_list" reusmen_medico="Medicos"></ResumenAmbXMedico_Page>
+}
 
 @code {
+    DateTime start_date = new DateTime();
+    DateTime end_date = new DateTime();
     List<ResumenAmbClasscs> resumenxcobertura_list;
     List<ResumenAmbXMedico> resumenxmedico_list;
     RelacionDerivacionTextClass relacionDerivacionTxt = new RelacionDerivacionTextClass();
@@ -186,11 +134,17 @@
         list_Esp_Efec = await daoEspecialidadesEfector.GetEspecialidadEfectorAsync();
     }
 
+    public void OnRangeSelect(DateRange range)
+    {
+        start_date = range.Start.DateTime;
+        end_date = range.End.DateTime;
+    }
+
     void procesar()
     {
         list_estadisticas = new List<AmbListClass>();
         DaoAmbEstadisticas daoAmbEstadisticas = new DaoAmbEstadisticas();
-        list_estadisticas = daoAmbEstadisticas.Estadisticas_Ambulatoria(list_selection_med, list_selection_derivador, list_selection_efector);
+        list_estadisticas = daoAmbEstadisticas.Estadisticas_Ambulatoria(list_selection_med, list_selection_derivador, list_selection_efector, start_date, end_date);
         resumenxcobertura_list = new List<ResumenAmbClasscs>();
 
         var resume_list = list_estadisticas.GroupBy(a => a.cobertura)
@@ -244,14 +198,6 @@
         }
     }
 
-    protected async Task export_resumen()
-    {
-        using (MemoryStream excelStream = pdfService.CreatePdf_Resumen(resumenxcobertura_list))
-        {
-            await JS.SaveAs("resumen_amb.pdf", excelStream.ToArray());
-        }
-    }
-
     Task<IEnumerable<MedicosDerivadoresClass>> SearchMedico(string searchText)
     {
         List<MedicosDerivadoresClass> result = list_Med.Where(x => x.Medico.ToLower().Contains(searchText.ToLower())).ToList();
@@ -283,27 +229,6 @@
     };
 
     Dictionary<string, int> PageSelector = new Dictionary<string, int>
-{
-        {"5", 5 },
-        {"10", 10 },
-        {"20", 20 },
-        {"30", 30 },
-        {"All", 0 }
-    };
-
-    Dictionary<string, string> translate_res = new Dictionary<string, string>
-{
-        {"next", "Siguiente" },
-        {"previous", "Anterior" },
-        {"pages", "Pagina __curpage__ de __totalpages__" },
-        {"totalresult", "__totalcount__ Registros" },
-        {"totalresultplural", "__totalcount__ Registros"},
-        {"filteredresults", "__filteredcount__ resultados de __totalcount__ Registros" },
-        {"filteredresultsplural", "__filteredcount__ resultados de __totalcount__ Registros"  },
-        {"selector", "Registros por Pagina:"}
-    };
-
-    Dictionary<string, int> PageSelector_res = new Dictionary<string, int>
 {
         {"5", 5 },
         {"10", 10 },

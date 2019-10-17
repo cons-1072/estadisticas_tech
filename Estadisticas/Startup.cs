@@ -40,6 +40,7 @@ namespace Estadisticas
             services.AddBlazoredToast();
             services.AddScoped<AppState, AppState>();
             services.AddSingleton<PdfService>();
+            services.AddSingleton<PdfServiceMulti>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
